@@ -32,6 +32,8 @@ const feedbackRoutes = require('./routes/feedback');
 const userRoutes = require('./routes/userRoutes'); // Import user routes
 const wordRoutes = require('./routes/wordRoutes'); // Import word routes
 const userWordRoutes = require('./routes/userWordRoutes'); // Import user word routes
+const authRoutes = require('./routes/authRoutes'); // Import authentication routes
+
 
 
 
@@ -41,6 +43,7 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/users', userRoutes); // Mount the user routes at /api/users
 app.use('/api/words', wordRoutes) // Mount the word routes at /api/words
 app.use('/api/userwords', userWordRoutes); // Mount the user word routes at /api/userWordRoutes
+app.use('/api/auth', authRoutes); // Mount the authorization routes at /api/auth
 
 
 // Root route
