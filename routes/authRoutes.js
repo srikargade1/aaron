@@ -7,66 +7,91 @@ const User = require('../models/userModel');
 // @desc    Register a new user
 // @route   POST /api/auth/register
 // @access  Public
-router.post('/register', async (req, res) => {
-    const { firstName, lastName, email, password, proficiencyLevel, learningLanguage } = req.body;
-
-    try {
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+const { body, validationResult } = require('express-validator');
+router.post(
+    '/register',
+    [
+        body('email').isEmail().withMessage('Enter a valid email'),
+        body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+        body('firstName').notEmpty().withMessage('First name is required'),
+        body('lastName').notEmpty().withMessage('Last name is required'),
+        body('proficiencyLevel').isIn(['Beginner', 'Intermediate', 'Advanced']).withMessage('Invalid proficiency level'),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
-        // Hash the password
-        const hashedPassword = await argon2.hash(password);
+        const { firstName, lastName, email, password, proficiencyLevel, learningLanguage } = req.body;
 
-        // Create new user
-        const newUser = new User({
-            firstName,
-            lastName,
-            email,
-            password: hashedPassword,
-            proficiencyLevel,
-            learningLanguage,
-        });
+        try {
+            // Check if user already exists
+            const existingUser = await User.findOne({ email });
+            if (existingUser) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
 
-        await newUser.save();
+            // Hash the password
+            const hashedPassword = await argon2.hash(password);
 
-        res.status(201).json({ message: 'User registered successfully', userId: newUser._id });
-    } catch (error) {
-        res.status(500).json({ message: 'Error registering user', error: error.message });
+            // Create new user
+            const newUser = new User({
+                firstName,
+                lastName,
+                email,
+                password: hashedPassword,
+                proficiencyLevel,
+                learningLanguage,
+            });
+
+            await newUser.save();
+
+            res.status(201).json({ message: 'User registered successfully', userId: newUser._id });
+        } catch (error) {
+            res.status(500).json({ message: 'Error registering user', error: error.message });
+        }
     }
-});
+);
 
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
 
-    try {
-        // Check if user exists
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+router.post(
+    '/login',
+    [
+        body('email').isEmail().withMessage('Enter a valid email'),
+        body('password').notEmpty().withMessage('Password is required'),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
-        // Verify password
-        const isMatch = await argon2.verify(user.password, password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+        const { email, password } = req.body;
+
+        try {
+            const user = await User.findOne({ email });
+            if (!user) {
+                return res.status(400).json({ message: 'Invalid email or password' });
+            }
+
+            const isMatch = await argon2.verify(user.password, password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Invalid email or password' });
+            }
+
+            const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+
+            user.refreshToken = refreshToken;
+            await user.save();
+
+            res.status(200).json({ token, refreshToken });
+        } catch (error) {
+            res.status(500).json({ message: 'Error logging in', error: error.message });
         }
-
-        // Generate JWT and Refresh Token
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
-
-        // Save the refresh token to the database
-        user.refreshToken = refreshToken;
-        await user.save();
-
-        res.status(200).json({ token, refreshToken });
-    } catch (error) {
-        res.status(500).json({ message: 'Error logging in', error: error.message });
     }
-});
+);
 
 
 // @desc    Refresh JWT
