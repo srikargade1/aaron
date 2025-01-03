@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
     },
     streak: { type: Number, default: 0 }, // User's daily streak count, default is 0
     createdAt: { type: Date, default: Date.now }, // Auto-generated timestamp for when the user was created
+    refreshToken: { type: String }, // Field to store the refresh token
+
 });
 
 // Create the User model from the schema
