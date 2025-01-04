@@ -89,4 +89,88 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// @desc    Increment encounter count for a word
+// @route   POST /api/userwords/encounter
+// @access  Private
+router.post('/encounter', async (req, res) => {
+    const { userId, wordId } = req.body;
+
+    try {
+        // Find or create a UserWord document
+        let userWord = await UserWord.findOne({ userId, wordId });
+        if (!userWord) {
+            userWord = new UserWord({ userId, wordId });
+        }
+
+        // Increment encounter count and update timestamp
+        userWord.encounteredCount += 1;
+        userWord.lastEncounteredAt = Date.now();
+        await userWord.save();
+
+        res.status(200).json({ message: 'Encounter logged', userWord });
+    } catch (error) {
+        res.status(500).json({ message: 'Error logging encounter', error: error.message });
+    }
+});
+
+// @desc    Increment checked count for a word
+// @route   POST /api/userwords/check
+// @access  Private
+router.post('/check', async (req, res) => {
+    const { userId, wordId } = req.body;
+
+    try {
+        // Find or create a UserWord document
+        let userWord = await UserWord.findOne({ userId, wordId });
+        if (!userWord) {
+            userWord = new UserWord({ userId, wordId });
+        }
+
+        // Increment checked count
+        userWord.checkedCount += 1;
+        await userWord.save();
+
+        res.status(200).json({ message: 'Checked count incremented', userWord });
+    } catch (error) {
+        res.status(500).json({ message: 'Error logging check', error: error.message });
+    }
+});
+
+// @desc    Mark a word for review
+// @route   PATCH /api/userwords/review
+// @access  Private
+const mongoose = require('mongoose');
+
+router.post('/review', async (req, res) => {
+    try {
+        // Validate the request body
+        const { userId, wordId } = req.body;
+
+        // Check if userId and wordId are provided
+        if (!userId || !wordId) {
+            return res.status(400).json({ message: 'userId and wordId are required' });
+        }
+
+        // Ensure userId and wordId are valid ObjectIds
+        if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(wordId)) {
+            return res.status(400).json({ message: 'Invalid userId or wordId' });
+        }
+
+        // Find or create the UserWord document
+        let userWord = await UserWord.findOne({ userId, wordId });
+        if (!userWord) {
+            userWord = new UserWord({ userId, wordId });
+        }
+
+        // Toggle the review status
+        userWord.isMarkedForReview = !userWord.isMarkedForReview;
+        await userWord.save();
+
+        res.status(200).json({ message: 'Review status updated', userWord });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ message: 'Failed to update interaction', error: error.message });
+    }
+});
+
 module.exports = router;
