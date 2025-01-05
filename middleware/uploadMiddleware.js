@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Configure Multer
+// Configure Multer 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const userId = req.body.userId;
