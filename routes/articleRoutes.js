@@ -44,14 +44,20 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     }
 });
 
-// @desc    Get custom articles for a user
+
+// @desc    Get custom articles for a specific user
 // @route   GET /api/articles/custom/:userId
 // @access  Private
 router.get('/custom/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
 
-        const articles = await Article.find({ createdBy: userId, type: 'custom' });
+        // Fetch custom articles for the user
+        const articles = await Article.find({ userId, type: 'custom' });
+
+        if (!articles.length) {
+            return res.status(404).json({ message: 'No custom articles found for this user' });
+        }
 
         res.status(200).json({ articles });
     } catch (error) {
