@@ -58,10 +58,12 @@ router.post(
 router.post(
     '/login',
     [
+        // Validation rules
         body('email').isEmail().withMessage('Enter a valid email'),
         body('password').notEmpty().withMessage('Password is required'),
     ],
     async (req, res) => {
+        // Extract validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
@@ -70,24 +72,34 @@ router.post(
         const { email, password } = req.body;
 
         try {
+            // Check if the user exists
             const user = await User.findOne({ email });
             if (!user) {
                 return res.status(400).json({ message: 'Invalid email or password' });
             }
 
+            // Verify the password
             const isMatch = await argon2.verify(user.password, password);
             if (!isMatch) {
                 return res.status(400).json({ message: 'Invalid email or password' });
             }
 
+            // Generate JWT and Refresh Token
             const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
             const refreshToken = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 
+            // Save the refresh token in the database
             user.refreshToken = refreshToken;
             await user.save();
 
-            res.status(200).json({ token, refreshToken });
+            // Respond with tokens
+            res.status(200).json({
+                message: 'Login successful',
+                token,
+                refreshToken,
+            });
         } catch (error) {
+            console.error('Error during login:', error.message);
             res.status(500).json({ message: 'Error logging in', error: error.message });
         }
     }
@@ -97,30 +109,44 @@ router.post(
 // @desc    Refresh JWT
 // @route   POST /api/auth/refresh
 // @access  Public
-router.post('/refresh', async (req, res) => {
-    const { refreshToken } = req.body;
-
-    if (!refreshToken) {
-        return res.status(400).json({ message: 'No refresh token provided' });
-    }
-
-    try {
-        // Verify the refresh token
-        const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-
-        // Check if the refresh token matches the one in the database
-        const user = await User.findById(decoded.userId);
-        if (!user || user.refreshToken !== refreshToken) {
-            return res.status(403).json({ message: 'Invalid refresh token' });
+router.post(
+    '/refresh',
+    [
+        // Validate input
+        body('refreshToken').notEmpty().withMessage('Refresh token is required'),
+    ],
+    async (req, res) => {
+        // Extract validation errors
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
 
-        // Generate a new JWT
-        const newToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const { refreshToken } = req.body;
 
-        res.status(200).json({ token: newToken });
-    } catch (error) {
-        res.status(403).json({ message: 'Invalid refresh token', error: error.message });
+        try {
+            // Verify the refresh token
+            const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+            // Check if the user exists and the refresh token matches
+            const user = await User.findById(decoded.userId);
+            if (!user || user.refreshToken !== refreshToken) {
+                return res.status(403).json({ message: 'Invalid or expired refresh token' });
+            }
+
+            // Generate a new JWT
+            const newToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+            // Respond with the new token
+            res.status(200).json({ token: newToken });
+        } catch (error) {
+            if (error.name === 'TokenExpiredError') {
+                return res.status(403).json({ message: 'Refresh token expired' });
+            }
+            res.status(403).json({ message: 'Invalid refresh token', error: error.message });
+        }
     }
-});
+);
+
 
 module.exports = router;

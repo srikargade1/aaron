@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose'); // Import mongoose for database connection
 const dotenv = require('dotenv'); // For environment variables
+const errorHandler = require('./middleware/errorHandler'); // Import error handler middleware
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -35,23 +36,22 @@ const userWordRoutes = require('./routes/userWordRoutes'); // Import user word r
 const authRoutes = require('./routes/authRoutes'); // Import authentication routes
 const articleRoutes = require('./routes/articleRoutes'); // Import article routes
 
-
-
-
 // Use routes
 app.use('/api/translation', translationRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/users', userRoutes); // Mount the user routes at /api/users
-app.use('/api/words', wordRoutes) // Mount the word routes at /api/words
+app.use('/api/words', wordRoutes); // Mount the word routes at /api/words
 app.use('/api/userwords', userWordRoutes); // Mount the user word routes at /api/userWordRoutes
 app.use('/api/auth', authRoutes); // Mount the authorization routes at /api/auth
 app.use('/api/articles', articleRoutes); // Mount the article routes at /api/articles
-
 
 // Root route
 app.get('/', (req, res) => {
     res.send('Welcome to Aaron!');
 });
+
+// Error handling middleware
+app.use(errorHandler);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
