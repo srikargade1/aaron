@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { body, validationResult } = require('express-validator');
-const Feedback = require('../models/feedbackModel'); // Import the Feedback model (create this if it doesn't exist)
+const { body, param, validationResult } = require('express-validator');
+const Feedback = require('../models/feedbackModel'); // Import the Feedback model
 
 // Middleware to handle validation errors
 const handleValidationErrors = (req, res, next) => {
@@ -68,8 +68,8 @@ router.get('/', async (req, res) => {
 router.get(
     '/:id',
     [
-        // Validation rule for feedback ID
-        body('id').isMongoId().withMessage('Invalid feedback ID'),
+        // Validation rule for feedback ID (from URL parameter)
+        param('id').isMongoId().withMessage('Invalid feedback ID'),
     ],
     handleValidationErrors,
     async (req, res) => {
@@ -89,5 +89,31 @@ router.get(
     }
 );
 
-module.exports = router;
+// @desc    Delete feedback by ID
+// @route   DELETE /api/feedback/:id
+// @access  Admin/Private (can be changed based on requirements)
+router.delete(
+    '/:id',
+    [
+        // Validation rule for feedback ID (from URL parameter)
+        param('id').isMongoId().withMessage('Invalid feedback ID'),
+    ],
+    handleValidationErrors,
+    async (req, res) => {
+        const { id } = req.params;
 
+        try {
+            const deletedFeedback = await Feedback.findByIdAndDelete(id);
+            if (!deletedFeedback) {
+                return res.status(404).json({ message: 'Feedback not found' });
+            }
+
+            res.status(200).json({ message: 'Feedback deleted successfully', feedback: deletedFeedback });
+        } catch (error) {
+            console.error('Error deleting feedback:', error.message);
+            res.status(500).json({ message: 'Failed to delete feedback', error: error.message });
+        }
+    }
+);
+
+module.exports = router;
