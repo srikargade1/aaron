@@ -38,6 +38,7 @@ Aaron is a comprehensive language learning application designed to help users im
 - Node.js
 - Express.js
 - MongoDB with Mongoose
+- Postman
 
 ### **Frontend**
 - React.js
