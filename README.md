@@ -31,8 +31,6 @@ Aaron is a comprehensive language learning application designed to help users im
 - Redundant articles will be removed and only a single copy of the article will be saved using data deduplication algorithms.
 - CLT based teaching techniques will be incorporated in later versions.
 
-
-
 ---
 
 ## **Technologies Used**
