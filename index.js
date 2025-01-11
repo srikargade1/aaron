@@ -35,6 +35,7 @@ const wordRoutes = require('./routes/wordRoutes'); // Import word routes
 const userWordRoutes = require('./routes/userWordRoutes'); // Import user word routes
 const authRoutes = require('./routes/authRoutes'); // Import authentication routes
 const articleRoutes = require('./routes/articleRoutes'); // Import article routes
+const progressRoutes = require('./routes/progressRoutes'); // Import progress routes
 
 // Use routes
 app.use('/api/translation', translationRoutes);
@@ -44,6 +45,7 @@ app.use('/api/words', wordRoutes); // Mount the word routes at /api/words
 app.use('/api/userwords', userWordRoutes); // Mount the user word routes at /api/userWordRoutes
 app.use('/api/auth', authRoutes); // Mount the authorization routes at /api/auth
 app.use('/api/articles', articleRoutes); // Mount the article routes at /api/articles
+app.use('/api/progress', progressRoutes); // Mount the progress bar routes at /api/progress
 
 // Root route
 app.get('/', (req, res) => {
