@@ -1,7 +1,7 @@
 const express = require('express');
 
 
-// @desc    Fetch user statistics like total articles, total words
+// @desc    Fetch user statistics like total articles, total words, articles left
 // @route   GET /api/users
 // @access  Public
 
