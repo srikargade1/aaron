@@ -4,6 +4,16 @@ const router = express.Router();
 // @desc    Fetch user statistics like total articles, total words, articles left
 // @route   GET /api/users
 // @access  Public
+router.get('/:id', async (req, res) => {
+    try{
+
+    }
+    catch
+    {
+        
+    }
+
+});
 
 
 
