@@ -29,8 +29,7 @@ Aaron is a comprehensive language learning application designed to help users im
 - Progress dashboard for tracking improvement.
 - Automatic labelling of custom articles to optimise search. This is achieved by the implementation of the LDA algorithm.
 - Redundant articles will be removed and only a single copy of the article will be saved using data deduplication algorithms.
-- CLT based teaching techniques will be incorporated in later versions.
-
+- CLT based teaching techniques will be incorporated in later versions, after the MVP is built and deployed.
 ---
 
 ## **Technologies Used**
