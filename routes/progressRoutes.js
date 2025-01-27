@@ -43,7 +43,4 @@ router.get('/word/:userId', async (req, res) => {
 // @route   GET /api/users
 // @access  Public
 
-
-
-
 module.exports = router;
