@@ -20,21 +20,19 @@ const userSchema = new mongoose.Schema({
     uploadedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Articles user has uploaded
     streak: { type: Number, default: 0 }, // Daily streak
     refreshToken: { type: String }, // Refresh token for authentication
-    createdAt: { type: Date, default: Date.now }, // Account creation date
-    updatedAt: { type: Date, default: Date.now } // Timestamp for profile updates
-});
+}, { timestamps: true }); // Automatically adds createdAt & updatedAt fields
 
-// Indexes for optimization
-userSchema.index({ email: 1 }, { unique: true });
+// Remove duplicate index declaration on email (Mongoose already enforces it)
 userSchema.index({ readArticles: 1 });
 userSchema.index({ uploadedArticles: 1 });
 
-// Middleware to update `updatedAt` on document updates
-userSchema.pre('save', function (next) {
-    this.updatedAt = Date.now();
+// Middleware to update `updatedAt` before updates
+userSchema.pre('findOneAndUpdate', function (next) {
+    this.set({ updatedAt: Date.now() });
     next();
 });
 
 // Create and export the User model
 const User = mongoose.model('User', userSchema);
 module.exports = User;
+
