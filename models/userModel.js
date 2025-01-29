@@ -17,6 +17,8 @@ const userSchema = new mongoose.Schema({
         wordsPerDay: { type: Number, default: 10 }, // Daily goal for learning words, default is 10
         articlesPerDay: { type: Number, default: 1 }, // Daily goal for reading articles, default is 1
     },
+    readArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Array of articles the user has read
+    uploadedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Array of articles the user has uploaded
     streak: { type: Number, default: 0 }, // User's daily streak count, default is 0
     createdAt: { type: Date, default: Date.now }, // Auto-generated timestamp for when the user was created
     refreshToken: { type: String }, // Field to store the refresh token
