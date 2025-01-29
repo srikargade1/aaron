@@ -1,31 +1,40 @@
-const mongoose = require('mongoose'); // Import mongoose to define the schema and model
+const mongoose = require('mongoose'); // Import mongoose
 
 // Define the User schema
 const userSchema = new mongoose.Schema({
-    firstName: { type: String, required: true }, // User's first name, required
-    lastName: { type: String, required: true }, // User's last name, required
-    email: { type: String, required: true, unique: true }, // User's email, required and must be unique
-    password: { type: String, required: true }, // User's hashed password, required
+    firstName: { type: String, required: true }, // User's first name
+    lastName: { type: String, required: true }, // User's last name
+    email: { type: String, required: true, unique: true }, // Unique email address
+    password: { type: String, required: true }, // Hashed password
     proficiencyLevel: { 
         type: String, 
-        enum: ['Beginner', 'Intermediate', 'Advanced'], // Dropdown-style predefined options
+        enum: ['Beginner', 'Intermediate', 'Advanced'], // Dropdown options
         required: true 
     }, 
-    // Language proficiency level, must be one of the predefined options
-    learningLanguage: { type: String, required: true }, // Language the user is learning (e.g., French)
+    learningLanguage: { type: String, required: true }, // Language being learned
     goals: { 
-        wordsPerDay: { type: Number, default: 10 }, // Daily goal for learning words, default is 10
-        articlesPerDay: { type: Number, default: 1 }, // Daily goal for reading articles, default is 1
+        wordsPerDay: { type: Number, default: 10 }, // Daily word goal
+        articlesPerDay: { type: Number, default: 1 }, // Daily article goal
     },
-    readArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Array of articles the user has read
-    uploadedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Array of articles the user has uploaded
-    streak: { type: Number, default: 0 }, // User's daily streak count, default is 0
-    createdAt: { type: Date, default: Date.now }, // Auto-generated timestamp for when the user was created
-    refreshToken: { type: String }, // Field to store the refresh token
-
+    readArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Articles user has read
+    uploadedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Articles user has uploaded
+    streak: { type: Number, default: 0 }, // Daily streak
+    refreshToken: { type: String }, // Refresh token for authentication
+    createdAt: { type: Date, default: Date.now }, // Account creation date
+    updatedAt: { type: Date, default: Date.now } // Timestamp for profile updates
 });
 
-// Create the User model from the schema
-const User = mongoose.model('User', userSchema);
+// Indexes for optimization
+userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ readArticles: 1 });
+userSchema.index({ uploadedArticles: 1 });
 
+// Middleware to update `updatedAt` on document updates
+userSchema.pre('save', function (next) {
+    this.updatedAt = Date.now();
+    next();
+});
+
+// Create and export the User model
+const User = mongoose.model('User', userSchema);
 module.exports = User;
