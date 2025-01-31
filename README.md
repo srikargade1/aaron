@@ -32,7 +32,6 @@ Aaron is a comprehensive language learning application designed to help users im
 - CLT based teaching techniques will be incorporated in later versions, after the MVP is built and deployed.
 - Should develop new APIs for document tagging and integrate existing APIs to access French meanings instantly among others. 
 - Finish all server features by the end of this month
-
 ---
 
 ## **Technologies Used**
