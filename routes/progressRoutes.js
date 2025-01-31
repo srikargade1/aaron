@@ -77,6 +77,7 @@ router.get('/articles/:userId', async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
+        
         const totalRead = user.readArticles.length;
         const totalUploaded = user.uploadedArticles.length;
         const articlesRemaining = Math.max(0, user.goals.articlesPerDay - totalRead);
