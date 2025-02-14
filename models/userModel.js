@@ -1,38 +1,36 @@
-const mongoose = require('mongoose'); // Import mongoose
+const mongoose = require('mongoose'); 
 
 // Define the User schema
 const userSchema = new mongoose.Schema({
-    firstName: { type: String, required: true }, // User's first name
-    lastName: { type: String, required: true }, // User's last name
-    email: { type: String, required: true, unique: true }, // Unique email address
-    password: { type: String, required: true }, // Hashed password
+    firstName: { type: String, required: true }, 
+    lastName: { type: String, required: true }, 
+    email: { type: String, required: true, unique: true }, 
+    password: { type: String, required: true }, 
     proficiencyLevel: { 
         type: String, 
-        enum: ['Beginner', 'Intermediate', 'Advanced'], // Dropdown options
+        enum: ['Beginner', 'Intermediate', 'Advanced'], 
         required: true 
     }, 
-    learningLanguage: { type: String, required: true }, // Language being learned
-    goals: { 
-        wordsPerDay: { type: Number, default: 10 }, // Daily word goal
-        articlesPerDay: { type: Number, default: 1 }, // Daily article goal
-    },
+    learningLanguage: { type: String, required: true }, 
     readArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Articles user has read
     uploadedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Articles user has uploaded
     streak: { type: Number, default: 0 }, // Daily streak
-    refreshToken: { type: String }, // Refresh token for authentication
-}, { timestamps: true }); // Automatically adds createdAt & updatedAt fields
+    refreshToken: { type: String }, 
+    createdAt: { type: Date, default: Date.now }, 
+    updatedAt: { type: Date, default: Date.now } 
+});
 
-// Remove duplicate index declaration on email (Mongoose already enforces it)
+// Indexes for optimization
+userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ readArticles: 1 });
 userSchema.index({ uploadedArticles: 1 });
 
-// Middleware to update `updatedAt` before updates
-userSchema.pre('findOneAndUpdate', function (next) {
-    this.set({ updatedAt: Date.now() });
+// Middleware to update `updatedAt` on document updates
+userSchema.pre('save', function (next) {
+    this.updatedAt = Date.now();
     next();
 });
 
 // Create and export the User model
 const User = mongoose.model('User', userSchema);
 module.exports = User;
-
