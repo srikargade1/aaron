@@ -14,7 +14,6 @@ const userSchema = new mongoose.Schema({
     learningLanguage: { type: String, required: true }, 
     readArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Articles user has read
     uploadedArticles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Article' }], // Articles user has uploaded
-    streak: { type: Number, default: 0 }, // Daily streak
     refreshToken: { type: String }, 
     createdAt: { type: Date, default: Date.now }, 
     updatedAt: { type: Date, default: Date.now } 

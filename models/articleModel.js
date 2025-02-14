@@ -1,22 +1,25 @@
-const mongoose = require('mongoose'); // Import mongoose to define the schema and model
+const mongoose = require('mongoose'); 
 
 // Define the Article schema
 const articleSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    content: { type: String, required: true },
-    tags: [{ type: String }],
+    title: { type: String, required: true }, 
+    content: { type: String, required: true }, 
+    tags: [{ type: String }], 
     difficultyLevel: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: true },
-    type: { type: String, enum: ['sample', 'custom'], required: true },
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: function () { return this.type === 'custom'; },
+    type: { type: String, enum: ['sample', 'custom'], required: true }, 
+    userId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: function() { return this.type === 'custom'; } 
     },
-    createdAt: { type: Date, default: Date.now },
+    uploadedBy: { type: String, required: true }, // 'curator' or userId
+    createdAt: { type: Date, default: Date.now }
 });
 
-// Create the Article model from the schema
-const Article = mongoose.model('Article', articleSchema);
+// Indexing for search performance
+articleSchema.index({ title: 1 });
+articleSchema.index({ tags: 1 });
 
-// Export the Article model for use in other parts of the app
+// Create the Article model
+const Article = mongoose.model('Article', articleSchema);
 module.exports = Article;
