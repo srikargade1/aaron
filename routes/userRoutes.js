@@ -151,4 +151,47 @@ router.delete(
     }
 );
 
+// @desc    Mark an article as read
+// @route   POST /api/users/readArticle
+// @access  Private (Requires authentication)
+router.post('/readArticle', async (req, res) => {
+    const { userId, articleId } = req.body;
+
+    try {
+        // Ensure valid ObjectIds
+        if (!mongoose.Types.ObjectId.isValid(userId) || !mongoose.Types.ObjectId.isValid(articleId)) {
+            return res.status(400).json({ message: 'Invalid userId or articleId' });
+        }
+
+        // Find the user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if the article is already marked as read
+        if (!user.readArticles.includes(articleId)) {
+            user.readArticles.push(articleId);
+            await user.save();
+        }
+
+        // Update article read history
+        const article = await Article.findById(articleId);
+        if (!article) {
+            return res.status(404).json({ message: 'Article not found' });
+        }
+
+        // Add an entry to the read history
+        if (!article.readHistory) {
+            article.readHistory = [];
+        }
+        article.readHistory.push({ userId, timestamp: new Date() });
+        await article.save();
+
+        res.status(200).json({ message: 'Article marked as read' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to mark article as read', error: error.message });
+    }
+});
+
 module.exports = router;
