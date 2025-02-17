@@ -20,7 +20,6 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes for optimization
-userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ readArticles: 1 });
 userSchema.index({ uploadedArticles: 1 });
 
