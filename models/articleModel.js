@@ -1,18 +1,17 @@
-const mongoose = require('mongoose'); 
+const mongoose = require('mongoose');
 
-// Define the Article schema
 const articleSchema = new mongoose.Schema({
-    title: { type: String, required: true }, 
-    content: { type: String, required: true }, 
-    tags: [{ type: String }], 
+    title: { type: String, required: true },
+    content: { type: String, default: '' },  // ✅ Allow empty content initially
+    tags: [{ type: String }],
     difficultyLevel: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced'], required: true },
-    type: { type: String, enum: ['sample', 'custom'], required: true }, 
+    type: { type: String, enum: ['sample', 'custom'], required: true },
     userId: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: function() { return this.type === 'custom'; } 
+        ref: 'User',
+        required: false  // ✅ Make `userId` optional (will be filled in step 2)
     },
-    uploadedBy: { type: String, required: true }, // 'curator' or userId
+    uploadedBy: { type: String, required: true }, // Can be 'curator' or a User ID
     createdAt: { type: Date, default: Date.now }
 });
 
