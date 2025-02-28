@@ -1,5 +1,4 @@
 # 🚀 Aaron Backend - Remaining Tasks
-
 ## ✅ 1. Fix Read History Tracking
 ### **Issue**
 - Currently, article reads are **not being recorded** in the database.
