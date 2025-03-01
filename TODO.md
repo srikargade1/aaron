@@ -12,6 +12,9 @@
   ```
 - When a user fetches an article, **append** `{ userId, timestamp: Date.now() }` to `readHistory`.
 
+### Update:
+Issue Fixed. Test and check if it works. 
+
 ---
 
 ## ✅ 2. Implement Word Lookup & Tracking

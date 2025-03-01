@@ -169,6 +169,7 @@ router.get(
             }
 
             res.status(200).json(article);
+            article.readHistory.append({ userId, timestamp: Date.now() });
         } catch (error) {
             console.error("Error fetching article:", error);
             res.status(500).json({ message: "Failed to fetch article", error: error.message });

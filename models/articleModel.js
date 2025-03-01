@@ -12,7 +12,8 @@ const articleSchema = new mongoose.Schema({
         required: false  // ✅ Make `userId` optional (will be filled in step 2)
     },
     uploadedBy: { type: String, required: true }, // Can be 'curator' or a User ID
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    readHistory: [{ userId: mongoose.Schema.Types.ObjectId, timestamp: Date }]
 });
 
 // Indexing for search performance
