@@ -8,9 +8,7 @@
 - Modify `GET /api/articles/:id` to **update the article's read history**.
 - Add a `readHistory` field in the `Article` schema:
   ```js
-  readHistory: [
-    { userId: mongoose.Schema.Types.ObjectId, timestamp: Date }
-  ]
+  readHistory: [{ userId: mongoose.Schema.Types.ObjectId, timestamp: Date } ]
   ```
 - When a user fetches an article, **append** `{ userId, timestamp: Date.now() }` to `readHistory`.
 
