@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { body, param, validationResult } = require("express-validator");
 const Article = require("../models/articleModel");
+const User = require('../models/userModel');
+const { default: mongoose } = require("mongoose");
 
 // Middleware for handling validation errors
 const handleValidationErrors = (req, res, next) => {
@@ -160,22 +162,43 @@ router.get(
     [param("id").isMongoId().withMessage("Invalid article ID")],
     handleValidationErrors,
     async (req, res) => {
+        const { id: articleId } = req.params;
+        const { userId } = req.query; // Expecting userId to be passed as a query parameter
+
         try {
-            const { id } = req.params;
-            const article = await Article.findById(id);
+            if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+                return res.status(400).json({ message: "Invalid user ID" });
+            }
+
+            if (!mongoose.Types.ObjectId.isValid(articleId)) {
+                return res.status(400).json({ message: "Invalid article ID" });
+            }
+
+            const article = await Article.findById(articleId);
 
             if (!article) {
                 return res.status(404).json({ message: "Article not found" });
             }
 
+            if (userId) {
+                const user = await User.findById(userId);
+                if (!user) {
+                    return res.status(404).json({ message: "User not found" });
+                }
+
+                // Append read history
+                article.readHistory.push({ userId, timestamp: Date.now() });
+                await article.save();
+            }
+
             res.status(200).json(article);
-            article.readHistory.append({ userId, timestamp: Date.now() });
         } catch (error) {
             console.error("Error fetching article:", error);
             res.status(500).json({ message: "Failed to fetch article", error: error.message });
         }
     }
 );
+
 
 // =============================
 // 📌 DELETE AN ARTICLE
