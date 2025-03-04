@@ -1,23 +1,6 @@
 # 🚀 Aaron Backend - Remaining Tasks
-## ✅ 1. Fix Read History Tracking
-### **Issue**
-- Currently, article reads are **not being recorded** in the database.
-- We need to track **which users read which articles** and **when**.
-
-### **Tasks**
-- Modify `GET /api/articles/:id` to **update the article's read history**.
-- Add a `readHistory` field in the `Article` schema:
-  ```js
-  readHistory: [{ userId: mongoose.Schema.Types.ObjectId, timestamp: Date } ]
-  ```
-- When a user fetches an article, **append** `{ userId, timestamp: Date.now() }` to `readHistory`.
-
-### **Update**:
-Issue Fixed. Test and check if it works. 
-
 ---
-
-## ✅ 2. Implement Word Lookup & Tracking
+## ✅ 1. Implement Word Lookup & Tracking
 ### **Feature**
 - Users should be able to **look up words** and track their progress.
 
@@ -33,7 +16,7 @@ Issue Fixed. Test and check if it works.
 
 ---
 
-## ✅ 3. Fix Progress Dashboard
+## ✅ 2. Fix Progress Dashboard
 ### **Issue**
 - **Old progress system** tracked **targets** (e.g., words per day).
 - We **removed** targets, but progress should still track:
@@ -47,7 +30,7 @@ Issue Fixed. Test and check if it works.
 
 ---
 
-## ✅ 4. Implement Translation API (Core Feature)
+## ✅ 3. Implement Translation API (Core Feature)
 ### **Feature**
 - Users should be able to **translate**:
   - **Single words**
@@ -66,7 +49,7 @@ Issue Fixed. Test and check if it works.
 
 ---
 
-## ✅ 5. Improve Search & Filtering
+## ✅ 4. Improve Search & Filtering
 ### **Feature**
 - Users should be able to **search articles by**:
   - **Title**
@@ -81,7 +64,7 @@ Issue Fixed. Test and check if it works.
 
 ---
 
-## ✅ 6. Data Deduplication (Remove Redundant Files)
+## ✅ 5. Data Deduplication (Remove Redundant Files)
 ### **Issue**
 - Users may **upload duplicate articles** or **redundant files**.
 - We need a **mechanism** to check for **existing content** before saving.
@@ -93,7 +76,7 @@ Issue Fixed. Test and check if it works.
 
 ---
 
-## ✅ 7. Automatic Tagging for Articles (LDA Algorithm)
+## ✅ 6. Automatic Tagging for Articles (LDA Algorithm)
 ### **Feature**
 - When a user uploads an article, **auto-generate tags** based on its content.
 
@@ -103,7 +86,7 @@ Issue Fixed. Test and check if it works.
 
 ---
 
-## ✅ 8. User Authentication Improvements
+## ✅ 7. User Authentication Improvements
 ### **Issue**
 - Currently, **no role-based authentication**.
 - Need to **restrict certain actions** (e.g., only **curator** can delete sample articles).
@@ -113,17 +96,6 @@ Issue Fixed. Test and check if it works.
 - Restrict **delete/update permissions** based on user roles.
 
 ---
-
-## 🎯 **Priority Order**
-1. **Fix Read History Tracking**
-2. **Implement Word Lookup & Tracking**
-3. **Fix Progress Dashboard**
-4. **Implement Translation API**
-5. **Improve Search & Filtering**
-6. **Data Deduplication**
-7. **Automatic Tagging (LDA)**
-8. **User Authentication Improvements**
-
 ---
 
 ## 📌 Notes
