@@ -171,5 +171,39 @@ router.delete(
     }
 );
 
+// @desc    Fetch translation and grammar notes.
+// @route   GET /api/words/getWord/:word
+// @access  Public
+router.get(
+    '/getWord/:word',
+    async (req, res) => {
+        try 
+        {
+            const { word: searchWord } = req.params;
+            const pattern = new RegExp(`^${searchWord}$`, "i");
+            const word = await Word.findOne({ word: pattern }).select('meanings');
+            if(!word)
+            {
+                return res.status(404).json({ message: 'Word not found'});
+            }
+            return res.status(200).json(word);
+
+
+        }
+        catch (error)
+        {
+            console.error("Error fetching the word:", error.message);
+            res.status(500).json({ message: "Failed to fetch the word", error: error.message });
+        }
+
+
+    }
+
+
+
+
+); 
+
+
 module.exports = router;
 

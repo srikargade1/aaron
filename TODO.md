@@ -14,6 +14,9 @@
   checkedCount: { type: Number, default: 0 }
   ```
 
+  ### Update: 
+  Almost done. Need to refine the output.
+
 ---
 
 ## ✅ 2. Fix Progress Dashboard
@@ -64,7 +67,7 @@
 
 ---
 
-## ✅ 5. Data Deduplication (Remove Redundant Files)
+## ✅ 5. Data Deduplication (Remove Redundant Files. Least Priority)
 ### **Issue**
 - Users may **upload duplicate articles** or **redundant files**.
 - We need a **mechanism** to check for **existing content** before saving.
@@ -73,20 +76,9 @@
 - Implement **hash-based file checking** to detect duplicate uploads.
 - Before saving an article, **check** if **similar content exists**.
 - **Modify upload logic** to prevent storing **duplicate articles**.
-
 ---
 
-## ✅ 6. Automatic Tagging for Articles (LDA Algorithm)
-### **Feature**
-- When a user uploads an article, **auto-generate tags** based on its content.
-
-### **Tasks**
-- Implement **Latent Dirichlet Allocation (LDA)** or **TF-IDF** for keyword extraction.
-- Modify `POST /api/articles` to **auto-assign tags**.
-
----
-
-## ✅ 7. User Authentication Improvements
+## ✅ 6. User Authentication Improvements
 ### **Issue**
 - Currently, **no role-based authentication**.
 - Need to **restrict certain actions** (e.g., only **curator** can delete sample articles).
