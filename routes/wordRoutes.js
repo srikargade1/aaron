@@ -187,7 +187,6 @@ router.get(
                 return res.status(404).json({ message: 'Word not found'});
             }
             return res.status(200).json(word);
-
         }
         catch (error)
         {
