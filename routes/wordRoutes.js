@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const { body, param, validationResult } = require('express-validator');
 const Word = require('../models/wordModel'); // Import the Word model
 const axios = require('axios');
@@ -175,31 +176,49 @@ router.delete(
 // @desc    Fetch translation and grammar notes.
 // @route   GET /api/words/getWord/:word
 // @access  Public
-router.get(
-    '/getWord/:word',
-    async (req, res) => {
-        try 
-        {
-            const { word: searchWord } = req.params;
-            // const { userId } = req.query;
-            const pattern = new RegExp(`^${searchWord}$`, "i");
-            const word = await Word.findOne({ word: pattern }).select('meanings');
-            if(!word)
-            {
-                return res.status(404).json({ message: 'Word not found'});
+router.get("/getWord/:word", async (req, res) => {
+    try {
+        const { word: searchWord } = req.params;
+        const { userId } = req.query;
+
+        // Decode the search word if it contains special characters
+        const decodedSearchWord = decodeURIComponent(searchWord);
+
+        // Validate `userId` if provided
+        if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid user ID" });
+        }
+
+        // Find the word in the database
+        const pattern = new RegExp(`^${decodedSearchWord}$`, "i");
+        const word = await Word.findOne({ word: pattern }).select("meanings");
+
+        if (!word) {
+            return res.status(404).json({ message: "Word not found" });
+        }
+
+        // Only make the axios request if `userId` is provided
+        if (userId) {
+            try {
+                await axios.post("http://localhost:3000/api/userwords/check", {
+                    userId,
+                    wordId: word._id
+                });
+            } catch (axiosError) {
+                console.error("Error in axios request:", axiosError.response?.data || axiosError.message);
+                return res.status(500).json({
+                    message: "Failed to update user word check",
+                    error: axiosError.response?.data || axiosError.message
+                });
             }
-            // await axios.post('https://api.example.com/update-resource', {userId: userId, wordId: word._id});
-            return res.status(200).json(word);
-        }
-        catch (error)
-        {
-            console.error("Error fetching the word:", error.message);
-            res.status(500).json({ message: "Failed to fetch the word", error: error.message });
         }
 
-
+        return res.status(200).json(word);
+    } catch (error) {
+        console.error("Error fetching the word:", error.message);
+        res.status(500).json({ message: "Failed to fetch the word", error: error.message });
     }
-); 
+});
 
 
 module.exports = router;
