@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { body, param, validationResult } = require('express-validator');
 const Word = require('../models/wordModel'); // Import the Word model
+const axios = require('axios');
 
 // @desc    Get all words
 // @route   GET /api/words
@@ -180,12 +181,14 @@ router.get(
         try 
         {
             const { word: searchWord } = req.params;
+            // const { userId } = req.query;
             const pattern = new RegExp(`^${searchWord}$`, "i");
             const word = await Word.findOne({ word: pattern }).select('meanings');
             if(!word)
             {
                 return res.status(404).json({ message: 'Word not found'});
             }
+            // await axios.post('https://api.example.com/update-resource', {userId: userId, wordId: word._id});
             return res.status(200).json(word);
         }
         catch (error)
@@ -196,10 +199,6 @@ router.get(
 
 
     }
-
-
-
-
 ); 
 
 
