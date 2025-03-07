@@ -34,9 +34,16 @@ router.get('/words/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
 
+        const wordsArray = [];
         // Fetch all user-word interactions
         const wordInteractions = await UserWord.find({ userId }).populate('wordId');
 
+        for(const interaction of wordInteractions)
+        {
+            const int_obj = interaction.toObject();
+            const word = int_obj.wordId.word;
+            wordsArray.push(word);
+        }
         res.status(200).json(wordInteractions);
     } catch (error) {
         res.status(500).json({ message: 'Failed to fetch word interactions', error: error.message });

@@ -1,20 +1,6 @@
 # 🚀 Aaron Backend - Remaining Tasks
 
-## ✅ 1. Fix Progress Dashboard
-### **Issue**
-- **Old progress system** tracked **targets** (e.g., words per day).
-- We **removed** targets, but progress should still track:
-  - **Total words checked**
-  - **Total articles read**
-
-### **Tasks**
-- Modify `GET /api/users/:id/progress`
-  - Count **words checked** from `UserWord` collection.
-  - Count **articles read** from `readHistory`.
-
----
-
-## ✅ 2. Implement Translation API (Core Feature)
+## ✅ 1. Implement Translation API (Core Feature)
 ### **Feature**
 - Users should be able to **translate**:
   - **Single words**
@@ -33,7 +19,7 @@
 
 ---
 
-## ✅ 3. Improve Search & Filtering
+## ✅ 2. Improve Search & Filtering
 ### **Feature**
 - Users should be able to **search articles by**:
   - **Title**
@@ -48,7 +34,7 @@
 
 ---
 
-## ✅ 4. Data Deduplication (Remove Redundant Files. Least Priority)
+## ✅ 3. Data Deduplication (Remove Redundant Files. Least Priority)
 ### **Issue**
 - Users may **upload duplicate articles** or **redundant files**.
 - We need a **mechanism** to check for **existing content** before saving.
@@ -59,7 +45,7 @@
 - **Modify upload logic** to prevent storing **duplicate articles**.
 ---
 
-## ✅ 5. User Authentication Improvements
+## ✅ 4. User Authentication Improvements
 ### **Issue**
 - Currently, **no role-based authentication**.
 - Need to **restrict certain actions** (e.g., only **curator** can delete sample articles).
