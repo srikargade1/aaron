@@ -38,7 +38,7 @@ const articleRoutes = require('./routes/articleRoutes'); // Import article route
 const progressRoutes = require('./routes/progressRoutes'); // Import progress routes
 
 // Use routes
-app.use('/api/translation', translationRoutes);
+app.use('/api/translation', translationRoutes); // Mount the translation routes at /api/translation
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/users', userRoutes); // Mount the user routes at /api/users
 app.use('/api/words', wordRoutes); // Mount the word routes at /api/words
