@@ -1,3 +1,10 @@
+
+// Create Route: `GET /api/translate/word/:word`
+//  - Fetch word translation & grammar notes.
+// Create Route: `GET /api/translate/sentence`
+//  - Translate full sentences.
+
+
 const express = require('express');
 const router = express.Router();
 
