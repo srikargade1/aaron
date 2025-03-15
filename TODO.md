@@ -1,25 +1,6 @@
 # 🚀 Aaron Backend - Remaining Tasks
 
-## ✅ 1. Implement Translation API (Core Feature)
-### **Feature**
-- Users should be able to **translate**:
-  - **Single words**
-  - **Sentences**
-  
-### **Options**
-1. **Google Translate API** (Paid)
-2. **LibreTranslate** (Self-hosted, Free)
-3. **Linguee API / DeepL API** (For contextual translations)
-
-### **Tasks**
-- **Create Route:** `GET /api/translate/word/:word`
-  - Fetch word translation & grammar notes.
-- **Create Route:** `GET /api/translate/sentence`
-  - Translate full sentences.
-
----
-
-## ✅ 2. Improve Search & Filtering
+## ✅ 1. Improve Search & Filtering
 ### **Feature**
 - Users should be able to **search articles by**:
   - **Title**
@@ -33,19 +14,7 @@
   - Implement **pagination**.
 
 ---
-
-## ✅ 3. Data Deduplication (Remove Redundant Files. Least Priority)
-### **Issue**
-- Users may **upload duplicate articles** or **redundant files**.
-- We need a **mechanism** to check for **existing content** before saving.
-
-### **Tasks**
-- Implement **hash-based file checking** to detect duplicate uploads.
-- Before saving an article, **check** if **similar content exists**.
-- **Modify upload logic** to prevent storing **duplicate articles**.
----
-
-## ✅ 4. User Authentication Improvements
+## ✅ 2. User Authentication Improvements
 ### **Issue**
 - Currently, **no role-based authentication**.
 - Need to **restrict certain actions** (e.g., only **curator** can delete sample articles).
