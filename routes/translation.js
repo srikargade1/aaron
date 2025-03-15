@@ -98,7 +98,11 @@ Respond in JSON format like this:
 // @route   GET /api/translation/sentence/:sentence
 // @access  Public
 router.get('/sentence/:sentence', (req, res) => {
-    res.send("fire")
+    res.send("fire");
+});
+
+router.get('/article/:articleid', (req, res) => {
+    res.send("This route is for adding all the missing words in an uploaded article to the database.");
 });
 
 module.exports = router;
