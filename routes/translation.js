@@ -101,7 +101,11 @@ router.get('/sentence/:sentence', (req, res) => {
     res.send("fire");
 });
 
+// @desc    Get a sentence translation from the api
+// @route   GET /api/translation/article/:articleid
+// @access  Public
 router.get('/article/:articleid', (req, res) => {
+    const { articleID } = req.params.articleid;
     res.send("This route is for adding all the missing words in an uploaded article to the database.");
 });
 
