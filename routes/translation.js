@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const Word = require('../models/wordModel'); // Adjust the path to your Mongoose model
+const multer = require('multer');
+const fs = require('fs').promises;
+const path = require('path'); 
+
+const upload = multer({ dest: 'uploads/' });
+
 
 router.get('/word/:word', async (req, res) => {
     const word = req.params.word;
@@ -94,13 +100,57 @@ Respond in JSON format like this:
     }
 });
 
-// @desc    Get a sentence translation from the api
-// @route   GET /api/translation/sentence/:sentence
+// @desc    Translate all the words in the given text.
+// @route   POST /api/translation/sentence
 // @access  Public
-router.get('/sentence/:sentence', (req, res) => {
-    res.send("fire");
-});
+router.post('/sentence', upload.single('textfile'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+    }
 
+    const filePath = req.file.path;
+
+    try {
+        // Read the text file using the promise-based fs.readFile
+        const fileContent = await fs.readFile(filePath, 'utf8'); // Correct usage
+
+        // Split the file content into words
+        const words = fileContent.split(/\s+/); // Split by whitespace
+
+        // Array to store responses for each word
+        const wordResponses = [];
+
+        // Loop through each word and call the /word/:word route
+        for (const word of words) {
+            try {
+                // Call the /word/:word route internally
+                const response = await axios.get(`http://localhost:3000/api/translation/word/${encodeURIComponent(word)}`);
+                wordResponses.push(response.data);
+            } catch (error) {
+                console.error(`Error processing word "${word}":`, error.message);
+                wordResponses.push({
+                    word: word,
+                    error: `Failed to process word: ${error.message}`
+                });
+            }
+        }
+
+        // Send the aggregated responses back to the client
+        res.json({
+            success: true,
+            message: 'All words processed successfully!',
+            wordResponses: wordResponses
+        });
+
+    } catch (error) {
+        console.error('Error processing the text file:', error);
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while processing the text file.',
+            error: error.message
+        });
+    }
+});
 // @desc    Get a sentence translation from the api
 // @route   GET /api/translation/article/:articleid
 // @access  Public
